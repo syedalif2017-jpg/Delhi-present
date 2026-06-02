@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head> <meta charset="UTF-8">
+    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Syed Labour Management - QR System</title>
+    <!-- ... Baaki CSS wahi hai jo aapne di thi ... -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* ... Aapka original CSS yahan rahega ... */
+        :root { --primary: #1e293b; --accent: #fbbf24; --success: #22c55e; --danger: #ef4444; --bg-light: #f8fafc; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+        /* ... Baaki CSS same ... */
+    </style>
+</head>
+<body>
+
+    <!-- Aapka pura HTML Body content yahan rahega -->
+    
+    <script type="module">
+        // Aapka pura original firebase aur logic code yahan rahega
+    </script>
+
+    <script>
+        // SERVICE WORKER REGISTRATION
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log('Service Worker Registered'))
+                    .catch(err => console.log('SW Registration Failed:', err));
+            });
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Syed Labour Management - QR System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #fbbf24;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --bg-light: #f8fafc;
+            --text-main: #334155;
+            --sidebar-width: 260px;
+        }
+
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: var(--bg-light); color: var(--text-main); }
+        .wrapper { display: flex; height: 100vh; width: 100vw; }
+
+        .sidebar { width: var(--sidebar-width); background: var(--primary); color: white; display: flex; flex-direction: column; transition: 0.3s; z-index: 1000; flex-shrink: 0; }
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+        .nav-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s; border-left: 4px solid transparent; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); border-left-color: var(--accent); }
+        .nav-active { background: rgba(255,255,255,0.15); border-left-color: var(--accent); font-weight: bold; }
+
+        .search-container { margin-bottom: 20px; position: relative; }
+        .search-input { width: 100%; padding: 12px 45px 12px 15px; border-radius: 10px; border: 1px solid #e2e8f0; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 12px; }
+        
+        .form-box { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        label { font-size: 14px; font-weight: 600; color: #64748b; margin-top: 10px; display: block; }
+        
+        .btn { padding: 10px 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-block; text-align: center; font-size: 14px; text-decoration: none; transition: 0.2s; }
+        .btn:active { transform: scale(0.95); }
+        .btn-block { width: 100%; display: block; margin-top: 10px; }
+        .btn-accent { background: var(--accent); color: #000; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-info { background: #3b82f6; color: white; }
+        .btn-sm { padding: 6px 10px; font-size: 11px; margin: 2px; }
+
+        .table-wrap { overflow-x: auto; background: white; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        th { background: #f1f5f9; padding: 12px; text-align: left; font-size: 13px; color: #64748b; }
+        td { padding: 12px; border-top: 1px solid #f1f5f9; font-size: 14px; vertical-align: middle; }
+
+        .labour-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+        .qr-img { width: 50px; height: 50px; background: #fff; margin-bottom: 5px; }
+        .qr-img img { display: block; margin: 0 auto; }
+        .page-section { display: none; }
+        .show { display: block; }
+
+        .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .close-modal { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #666; }
+
+        #authWrapper { display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; position: fixed; top: 0; left: 0; background: #f4f7f9; z-index: 2000; }
+        .auth-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 85%; max-width: 350px; text-align: center; }
+
+        .contractor-item { background: white; padding: 18px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #e2e8f0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .contractor-item:hover { border-color: var(--accent); background: #fffbeb; transform: translateY(-2px); }
+
+        .month-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-top: 15px; }
+        .month-btn { background: white; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; transition: 0.3s; }
+        .month-btn:hover { background: var(--accent); border-color: var(--accent); }
+
+        /* Updated Bill Table Styles for Weekly Display */
+        #billTable th, #billTable td { border: 1px solid #e2e8f0; text-align: center; font-size: 12px; padding: 8px 4px; }
+        #billTable .details-col { text-align: left; min-width: 200px; padding-left: 10px; }
+        .day-header { background: #f8fafc; font-weight: bold; color: #1e293b; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 70px; }
+            .sidebar h3, .nav-item span { display: none; }
+            .nav-item { justify-content: center; padding: 20px 0; }
+            .main-content { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Modals -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="mHeader" style="margin-top:0; color: var(--primary);">Labour Profile</h2>
+            <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 15px;">
+            <div id="modalBody" style="line-height: 1.6; font-size: 14px;"></div>
+        </div>
+    </div>
+
+    <div id="attnModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-top:0;">📝 Mark Attendance</h3>
+            <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 10px;">
+            <div class="form-box" style="box-shadow: none; padding: 0;">
+                <label>Labour Name</label>
+                <input type="text" id="att_labName" readonly style="background: #f1f5f9;">
+                <label>Contractor</label>
+                <input type="text" id="att_contName" readonly style="background: #f1f5f9;">
+                <label>Master (8hrs = 1 Master)</label>
+                <input type="number" id="att_master" step="0.1" value="1.5">
+                <label>Date</label>
+                <input type="date" id="att_date">
+                <input type="hidden" id="att_labId">
+                <button class="btn btn-success btn-block" onclick="submitAttendance()">OK - Save Attendance ✅</button>
+                <button class="btn btn-danger btn-block" onclick="closeAttnModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login/Auth -->
+    <div id="authWrapper">
+        <div class="auth-card">
+            <h2 id="authTitle">🔐 Syed Login</h2>
+            <div id="regFields" style="display:none"><input id="regName" placeholder="👤 Full Name"></div>
+            <input id="mobile" placeholder="📱 Mobile Number" type="tel">
+            <input id="password" type="password" placeholder="🔑 Password">
+            <button class="btn btn-accent btn-block" onclick="handleAuth()" id="authBtn">Login</button>
+            <p style="font-size:13px; color: #666; cursor:pointer; margin-top:15px;" onclick="toggleAuth()">
+                <span id="toggleText">New User? Register here</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Main App System -->
+    <div id="appSystem" style="display:none;">
+        <div class="wrapper">
+            <div class="sidebar">
+                <div style="padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <h3 style="margin:0; font-size: 16px;">Syed Admin</h3>
+                </div>
+                <div class="nav-item nav-active" onclick="showSec('homeSec', this)"><i class="fas fa-home"></i> <span>Dashboard</span></div>
+                <div class="nav-item" onclick="showSec('regSec', this)"><i class="fas fa-user-plus"></i> <span>Registration</span></div>
+                <div class="nav-item" onclick="showSec('attnSec', this)"><i class="fas fa-qrcode"></i> <span>QR Scanner</span></div>
+                <div class="nav-item" onclick="showSec('attnListSec', this)"><i class="fas fa-list-check"></i> <span>Attendance</span></div>
+                <div class="nav-item" onclick="showSec('paySec', this)"><i class="fas fa-indian-rupee-sign"></i> <span>Payment/Bill</span></div>
+                <div class="nav-item" onclick="showSec('contListSec', this)"><i class="fas fa-city"></i> <span>Contractor List</span></div>
+                <div class="nav-item" style="margin-top:auto; color:var(--danger);" onclick="logOut()"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></div>
+            </div>
+
+            <div class="main-content">
+                <!-- Home Section -->
+                <div id="homeSec" class="page-section show">
+                    <h1>Dashboard 📊</h1>
+                    <div class="search-container">
+                        <input type="text" id="labourSearch" class="search-input" placeholder="Search by Name or Labour ID..." onkeyup="filterLabourList()">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div><small>Total Labour</small><h3 id="statTotalLabour">0</h3></div></div>
+                        <div class="stat-card"><div><small>Total Contractor</small><h3 id="statTotalContractor">0</h3></div></div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Photo</th><th>Name & Category</th><th>Site Name</th><th>Contractor</th><th>QR Code</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="labourTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Payment Section -->
+                <div id="paySec" class="page-section">
+                    <h1>Payment & Billing 💰</h1>
+                    <div class="form-box">
+                        <div id="payStep1">
+                            <h3>1. Select Month (2026)</h3>
+                            <div class="month-grid" id="payMonthGrid"></div>
+                        </div>
+                        <div id="payStep2" style="display:none;">
+                            <button class="btn btn-sm btn-info" onclick="goBackToPayStep1()"><i class="fas fa-arrow-left"></i> Back</button>
+                            <h3 id="payMonthTitle">Weeks (Sunday - Saturday)</h3>
+                            <div class="month-grid" id="payWeekGrid"></div>
+                        </div>
+                        <div id="payStep3" style="display:none;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <button class="btn btn-sm btn-info" onclick="goBackToPayStep2()"><i class="fas fa-arrow-left"></i> Back</button>
+                                <div>
+                                    <label style="display:inline; margin-right:5px;">Contractor:</label>
+                                    <select id="billContractorFilter" style="width:auto; padding:5px; margin:0;" onchange="refreshBillReport()"></select>
+                                    <button class="btn btn-sm btn-success" onclick="downloadBillPDF()"><i class="fas fa-file-pdf"></i> Download</button>
+                                </div>
+                            </div>
+                            
+                            <div id="billContent" style="background:white; padding:20px; border-radius:10px; border:1px solid #e2e8f0;">
+                                <center>
+                                    <h1 id="billContractorHeader" style="margin:0; color:var(--primary); text-transform:uppercase; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 5px;">SYED MANAGEMENT</h1>
+                                    <h2 style="margin:10px 0 5px 0; letter-spacing: 1px;">LABOUR BILL REPORT</h2>
+                                    <p id="billPeriod" style="font-weight:bold; color: #64748b; margin-bottom: 20px;"></p>
+                                </center>
+                                <div class="table-wrap" style="box-shadow: none; border: 1px solid #eee;">
+                                    <table id="billTable" style="min-width: 100%; border-collapse: collapse;">
+                                        <thead id="billTableHead"></thead>
+                                        <tbody id="billTableBody"></tbody>
+                                    </table>
+                                </div>
+                                <div id="billTotalBox" style="text-align:right; font-size:22px; font-weight:800; padding:20px; background:#f1f5f9; border-radius:0 0 10px 10px; border: 1px solid #e2e8f0; border-top: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registration Section -->
+                <div id="regSec" class="page-section">
+                    <h1>New Registration 📝</h1>
+                    <div class="form-box">
+                        <label>🏗️ Site Name</label><input type="text" id="sName" placeholder="Enter Site Name">
+                        <label>📅 Registration Date</label><input type="date" id="regDate">
+                        <label>🛠️ Labour Category</label>
+                        <select id="lCategory">
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="Supervisor">Supervisor</option><option value="Mason (Mistry)">Mason (Mistry)</option>
+                            <option value="Carpenter">Carpenter</option><option value="Helper">Helper</option>
+                        </select>
+                        <label>👤 Labour Name</label><input type="text" id="lName" placeholder="Enter Full Name">
+                        <label>🏢 Contractor Name</label><input type="text" id="cName" placeholder="Enter Contractor Name">
+                        <label>📍 Address</label><input type="text" id="lAddress" placeholder="Full Address">
+                        <label>🆔 Aadhaar Number</label><input type="text" id="lAadhar" placeholder="12 Digits" maxlength="12">
+                        <label>💰 Daily Rate (1 Master)</label><input type="number" id="rate" placeholder="₹ Amount">
+                        <label>📸 Labour Photo (Optional)</label><input type="file" id="lPhoto" accept="image/*">
+                        <button id="saveBtn" class="btn btn-success btn-block" onclick="saveLabourData()">Register Labour ✅</button>
+                    </div>
+                </div>
+
+                <!-- SCAN QR -->
+                <div id="attnSec" class="page-section">
+                    <h1>Scan QR Code 📷</h1>
+                    <div id="reader" style="width: 100%; border-radius: 15px; overflow: hidden; border: 2px dashed #ccc; background: #fff;"></div>
+                </div>
+
+                <!-- ATTN LIST -->
+                <div id="attnListSec" class="page-section">
+                    <h1>Attendance List 📋</h1>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Date</th><th>Labour Name</th><th>Contractor</th><th>Master</th><th>Status</th><th>Action</th></tr></thead>
+                            <tbody id="attendanceTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CONTRACTOR LIST -->
+                <div id="contListSec" class="page-section"><h1>Contractors Directory 🏢</h1><div id="contractorCardsContainer"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyDQR0l06c3ofGs0yFUEYowN_2I35Em9fWI", authDomain: "syed-kirana-store.firebaseapp.com", projectId: "syed-kirana-store", storageBucket: "syed-kirana-store.appspot.com" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let html5QrCode, laboursData = {}, attendanceData = [], currentMonth = 0, currentWeekRange = { start: null, end: null };
+
+        document.getElementById('regDate').valueAsDate = new Date();
+
+        window.toggleAuth = () => {
+            const isLogin = document.getElementById("authTitle").innerText.includes("Login");
+            document.getElementById("authTitle").innerText = isLogin ? "📝 Register" : "🔐 Syed Login";
+            document.getElementById("authBtn").innerText = isLogin ? "Register Now" : "Login";
+            document.getElementById("regFields").style.display = isLogin ? "block" : "none";
+        };
+
+        window.handleAuth = async () => {
+            const m = document.getElementById("mobile").value, p = document.getElementById("password").value;
+            try { await signInWithEmailAndPassword(auth, m+"@app.com", p); } catch (e) { alert(e.message); }
+        };
+
+        window.logOut = () => signOut(auth).then(() => location.reload());
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById("authWrapper").style.display = "none";
+                document.getElementById("appSystem").style.display = "block";
+                loadData(user.uid);
+                initBillMonths();
+            }
+        });
+
+        function loadData(uid) {
+            onSnapshot(query(collection(db, "users", uid, "labours"), orderBy("timestamp", "desc")), (snap) => {
+                const tbody = document.getElementById("labourTableBody"), contC = document.getElementById("contractorCardsContainer");
+                tbody.innerHTML = ""; contC.innerHTML = "";
+                const cMap = {};
+                snap.forEach(doc => {
+                    const d = doc.data(); d.id = doc.id; laboursData[d.labourId] = d;
+                    const cKey = (d.contractorName || 'Unknown').trim().toLowerCase();
+                    if(!cMap[cKey]) cMap[cKey] = { name: d.contractorName, list: [] };
+                    cMap[cKey].list.push(d);
+                });
+                renderLabourTable(Object.values(laboursData));
+                const filterSelect = document.getElementById("billContractorFilter");
+                filterSelect.innerHTML = '<option value="all">All Contractors</option>';
+                Object.keys(cMap).sort().forEach(k => {
+                    contC.innerHTML += `<div class="contractor-item" onclick="showSec('homeSec')"><div><strong>${cMap[k].name}</strong><br><small>${cMap[k].list.length} Labours</small></div><i class="fas fa-chevron-right"></i></div>`;
+                    filterSelect.innerHTML += `<option value="${k}">${cMap[k].name}</option>`;
+                });
+                document.getElementById("statTotalLabour").innerText = snap.size;
+                document.getElementById("statTotalContractor").innerText = Object.keys(cMap).length;
+            });
+
+            onSnapshot(query(collection(db, "users", uid, "attendance"), orderBy("date", "asc")), (snap) => {
+                const tbody = document.getElementById("attendanceTableBody");
+                tbody.innerHTML = ""; attendanceData = [];
+                snap.forEach(doc => {
+                    const d = doc.data(); d.docId = doc.id; attendanceData.push(d);
+                    tbody.innerHTML += `<tr><td>${d.date}</td><td>${d.labourName}</td><td>${d.contractorName}</td><td>${d.masterValue || 1.5}</td><td><span class="btn-success btn-sm">Present</span></td><td><button class="btn btn-danger btn-sm" onclick="deleteAttendance('${doc.id}')"><i class="fas fa-times"></i></button></td></tr>`;
+                });
+            });
+        }
+
+        function renderLabourTable(list) {
+            const tbody = document.getElementById("labourTableBody"); tbody.innerHTML = "";
+            list.forEach(d => {
+                tbody.innerHTML += `<tr><td><img src="${d.photoUrl}" class="labour-img"></td><td><b>${d.labourName}</b><br><small>${d.category}</small></td><td>${d.siteName}</td><td>${d.contractorName}</td><td style="text-align:center"><div id="qr_${d.labourId}" class="qr-img"></div><button class="btn btn-info btn-sm" onclick="downloadQR('${d.labourId}', '${d.labourName}')"><i class="fas fa-download"></i> QR</button></td><td><button class="btn btn-accent btn-sm" onclick="viewLabourDetails('${d.labourId}')"><i class="fas fa-eye"></i> Details</button><button class="btn btn-danger btn-sm" onclick="deleteLabour('${d.id}')"><i class="fas fa-trash"></i></button></td></tr>`;
+                setTimeout(() => { const box = document.getElementById("qr_"+d.labourId); if(box && box.innerHTML === "") new QRCode(box, { text: d.labourId, width: 80, height: 80 }); }, 100);
+            });
+        }
+
+        window.filterLabourList = () => {
+            const val = document.getElementById("labourSearch").value.toLowerCase();
+            const filtered = Object.values(laboursData).filter(l => l.labourName.toLowerCase().includes(val) || l.labourId.toLowerCase().includes(val));
+            renderLabourTable(filtered);
+        };
+
+        window.startScanner = () => {
+            if(!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, async (text) => {
+                const lab = laboursData[text];
+                if(lab) { await html5QrCode.stop(); openAttnModal(lab); } else { alert("Labour ID not found!"); }
+            }).catch(e => console.log(e));
+        };
+
+        window.openAttnModal = (lab) => {
+            document.getElementById("att_labName").value = lab.labourName;
+            document.getElementById("att_contName").value = lab.contractorName;
+            document.getElementById("att_labId").value = lab.labourId;
+            document.getElementById("att_date").valueAsDate = new Date();
+            document.getElementById("attnModal").style.display = "flex";
+        };
+
+        window.closeAttnModal = () => { document.getElementById("attnModal").style.display = "none"; if(document.getElementById('attnSec').classList.contains('show')) startScanner(); };
+
+        window.submitAttendance = async () => {
+            const lId = document.getElementById("att_labId").value, lName = document.getElementById("att_labName").value, cName = document.getElementById("att_contName").value, masterVal = parseFloat(document.getElementById("att_master").value), dateVal = document.getElementById("att_date").value;
+            const lab = laboursData[lId]; if(!dateVal || isNaN(masterVal)) return alert("Please fill all fields");
+            try {
+                await addDoc(collection(db, "users", auth.currentUser.uid, "attendance"), { labourId: lId, labourName: lName, contractorName: cName, siteName: lab.siteName, date: dateVal, masterValue: masterVal, timestamp: serverTimestamp() });
+                alert("Attendance Saved! ✅"); document.getElementById("attnModal").style.display = "none"; if(document.getElementById('attnSec').classList.contains('show')) startScanner();
+            } catch (e) { alert("Error: " + e.message); }
+        };
+
+        window.viewLabourDetails = (labourId) => {
+            const l = laboursData[labourId]; if(!l) return;
+            document.getElementById("mHeader").innerText = l.labourName;
+            document.getElementById("modalBody").innerHTML = `<div style="text-align:center; margin-bottom:15px;"><img src="${l.photoUrl}" style="width:100px; height:100px; border-radius:10px; border:3px solid var(--accent); object-fit:cover;"></div><p><strong>🏗️ Site:</strong> ${l.siteName || 'N/A'}</p><p><strong>📅 Reg. Date:</strong> ${l.regDate || 'N/A'}</p><p><strong>🛠️ Category:</strong> ${l.category || 'N/A'}</p><p><strong>🏢 Contractor:</strong> ${l.contractorName || 'N/A'}</p><p><strong>📍 Address:</strong> ${l.address || 'N/A'}</p><p><strong>🆔 Aadhaar:</strong> [Aadhaar Redacted]</p><p><strong>💰 Daily Rate (1 Master):</strong> ₹${l.rate || 0}</p><p><strong>🔑 ID:</strong> ${l.labourId}</p>`;
+            document.getElementById("detailsModal").style.display = "flex";
+        };
+
+        window.downloadQR = (labourId, name) => { const canvas = document.getElementById("qr_" + labourId).querySelector("canvas"); if (canvas) { const link = document.createElement("a"); link.href = canvas.toDataURL("image/png"); link.download = `QR_${name}.png`; link.click(); } };
+
+        function initBillMonths() {
+            const ms = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const grid = document.getElementById("payMonthGrid");
+            grid.innerHTML = ms.map((m, i) => `<div class="month-btn" onclick="selectPayMonth(${i}, '${m}')">${m} 2026</div>`).join('');
+        }
+
+        window.selectPayMonth = (monthIdx, monthName) => {
+            currentMonth = monthIdx;
+            document.getElementById("payStep1").style.display = "none";
+            document.getElementById("payStep2").style.display = "block";
+            const grid = document.getElementById("payWeekGrid"); grid.innerHTML = "";
+            
+            // Get first Sunday of the month (or previous month's end)
+            let date = new Date(2026, monthIdx, 1);
+            while (date.getDay() !== 0) { date.setDate(date.getDate() - 1); }
+            
+            for (let i = 1; i <= 6; i++) {
+                let start = new Date(date);
+                let end = new Date(date);
+                end.setDate(end.getDate() + 6);
+                
+                // Only show weeks that have at least one day in the selected month
+                if (start.getMonth() > monthIdx && start.getFullYear() === 2026) break;
+                if (end.getMonth() < monthIdx && end.getFullYear() === 2026 && i > 1) break;
+
+                const sStr = start.toISOString().split('T')[0];
+                const eStr = end.toISOString().split('T')[0];
+                grid.innerHTML += `<div class="month-btn" onclick="selectPayWeek('${sStr}', '${eStr}')">Week ${i}<br><small>${start.getDate()} ${msShort(start.getMonth())} - ${end.getDate()} ${msShort(end.getMonth())}</small></div>`;
+                date.setDate(date.getDate() + 7);
+            }
+        };
+
+        function msShort(m) { return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][m]; }
+
+        window.selectPayWeek = (startDate, endDate) => {
+            currentWeekRange = { start: startDate, end: endDate };
+            document.getElementById("payStep2").style.display = "none";
+            document.getElementById("payStep3").style.display = "block";
+            refreshBillReport();
+        };
+
+        window.refreshBillReport = () => {
+            const filter = document.getElementById("billContractorFilter").value;
+            const header = document.getElementById("billContractorHeader");
+            if(filter !== 'all') { 
+                header.innerText = document.getElementById("billContractorFilter").options[document.getElementById("billContractorFilter").selectedIndex].text;
+            } else { 
+                header.innerText = "SYED MANAGEMENT - ALL LABOURS"; 
+            }
+
+            // Correct Dates Calculation for Headers
+            let datesArr = [];
+            let curr = new Date(currentWeekRange.start);
+            for(let i=0; i<7; i++) {
+                datesArr.push(new Date(curr).toISOString().split('T')[0]);
+                curr.setDate(curr.getDate() + 1);
+            }
+
+            document.getElementById("billPeriod").innerText = `Report Period: ${datesArr[0]} to ${datesArr[6]} (Sun-Sat)`;
+            
+            const head = document.getElementById("billTableHead");
+            head.innerHTML = `<tr>
+                <th class="details-col">Labour Details & Site</th>
+                ${datesArr.map(d => {
+                    let dt = new Date(d);
+                    return `<th class="day-header">${dt.toLocaleDateString('en-US', {weekday: 'short'})}<br>${dt.getDate()} ${msShort(dt.getMonth())}</th>`;
+                }).join('')}
+                <th>Rate</th>
+                <th>Total Masters</th>
+                <th>Amount</th>
+            </tr>`;
+
+            const tbody = document.getElementById("billTableBody");
+            tbody.innerHTML = ""; 
+            let gTotal = 0;
+
+            Object.values(laboursData).forEach(lab => {
+                const labContKey = (lab.contractorName || "").trim().toLowerCase();
+                if(filter !== 'all' && labContKey !== filter) return;
+
+                const relevantAttn = attendanceData.filter(a => a.labourId === lab.labourId && a.date >= datesArr[0] && a.date <= datesArr[6]);
+                
+                if(relevantAttn.length > 0) {
+                    let totalMaster = 0;
+                    let daysCells = "";
+                    
+                    datesArr.forEach(dStr => {
+                        const dayAttn = relevantAttn.find(a => a.date === dStr);
+                        if(dayAttn) {
+                            daysCells += `<td style="background:#f0fdf4; font-weight:bold;">${dayAttn.masterValue || 1.5}</td>`;
+                            totalMaster += (dayAttn.masterValue || 1.5);
+                        } else {
+                            daysCells += `<td>-</td>`;
+                        }
+                    });
+
+                    const totalCost = totalMaster * (lab.rate || 0);
+                    gTotal += totalCost;
+
+                    tbody.innerHTML += `<tr>
+                        <td class="details-col">
+                            <div style="font-weight:700; color:var(--primary);">${lab.labourName}</div>
+                            <div style="font-size:10px; color:#64748b;">${lab.category} | Site: ${lab.siteName || 'N/A'}</div>
+                        </td>
+                        ${daysCells}
+                        <td>₹${lab.rate}</td>
+                        <td style="font-weight:bold;">${totalMaster.toFixed(1)}</td>
+                        <td style="font-weight:bold; color:var(--primary);">₹${totalCost.toLocaleString('en-IN')}</td>
+                    </tr>`;
+                }
+            });
+
+            document.getElementById("billTotalBox").innerHTML = `
+                <span style="font-size: 16px; color: #64748b; margin-right: 10px;">GRAND TOTAL:</span>
+                <span style="color:var(--success);">₹${gTotal.toLocaleString('en-IN', {minimumFractionDigits:2})}</span>
+            `;
+
+            if(tbody.innerHTML === "") {
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; color:#94a3b8;">No records found for this selection.</td></tr>`;
+            }
+        };
+
+        window.goBackToPayStep1 = () => { document.getElementById("payStep2").style.display="none"; document.getElementById("payStep1").style.display="block"; };
+        window.goBackToPayStep2 = () => { document.getElementById("payStep3").style.display="none"; document.getElementById("payStep2").style.display="block"; };
+
+        window.saveLabourData = async () => {
+            const file = document.getElementById("lPhoto").files[0], btn = document.getElementById("saveBtn"), lName = document.getElementById("lName").value, cName = document.getElementById("cName").value, aadharNum = document.getElementById("lAadhar").value.trim();
+            if(!lName || !cName || aadharNum.length !== 12) return alert("Fill Name, Contractor and 12-digit Aadhaar");
+            btn.disabled = true; btn.innerText = "Saving...";
+            try {
+                let url = "https://cdn-icons-png.flaticon.com/512/149/149071.png"; const id = "LAB" + Date.now();
+                if (file) { const sRef = ref(storage, `labours/${id}`); await uploadBytes(sRef, file); url = await getDownloadURL(sRef); }
+                await addDoc(collection(db, "users", auth.currentUser.uid, "labours"), { labourId: id, labourName: lName, contractorName: cName, siteName: document.getElementById("sName").value, category: document.getElementById("lCategory").value, rate: parseInt(document.getElementById("rate").value) || 0, address: document.getElementById("lAddress").value, regDate: document.getElementById("regDate").value, aadhar: aadharNum, photoUrl: url, timestamp: serverTimestamp() });
+                alert("Registered! ✅"); btn.disabled = false; btn.innerText = "Register Labour ✅"; showSec('homeSec');
+            } catch (e) { alert(e.message); btn.disabled = false; }
+        };
+
+        window.showSec = (id, el) => {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('show'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+            document.getElementById(id).classList.add('show'); if(el) el.classList.add('nav-active');
+            if(id === 'attnSec') startScanner(); else if(html5QrCode) html5QrCode.stop().catch(() => {});
+        };
+
+        window.closeModal = () => document.getElementById("detailsModal").style.display = "none";
+        window.deleteAttendance = async (id) => { if(confirm("Delete attendance?")) await deleteDoc(doc(db, "users", auth.currentUser.uid, "attendance", id)); };
+        window.deleteLabour = async (id) => { if(confirm("Delete labour?")) await deleteDoc(doc(db, "users", auth.currentUser.uid, "labours", id)); };
+        
+        window.downloadBillPDF = () => { 
+            const element = document.getElementById('billContent');
+            const opt = {
+                margin: 0.2,
+                filename: 'Syed_Weekly_Bill.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+            html2pdf().set(opt).from(element).save();
+        };
+
+    </script>
+</body>
+</html>
+
